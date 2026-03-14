@@ -8,10 +8,11 @@ export class TelegramController {
 
   constructor(private readonly telegramService: TelegramService) {}
 
+
   @Post('webhook')
-  receiveMessage(@Body() body: any, @Res() res: Response) {
-    this.logger.log('📨 Nuevo mensaje de Telegram');
-    this.telegramService.handleIncomingMessage(body);
-    return res.status(HttpStatus.OK).json({ status: 'ok' });
-  }
+async receiveMessage(@Body() body: any, @Res() res: Response) {
+  this.logger.log('📨 Nuevo mensaje de Telegram');
+  await this.telegramService.handleIncomingMessage(body); // ← await
+  return res.status(HttpStatus.OK).json({ status: 'ok' });
+}
 }
