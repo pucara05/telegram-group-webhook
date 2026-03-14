@@ -21,54 +21,100 @@
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
 
-## Description
+# 🤖 Telegram Group Webhook Bot
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Bot inteligente para grupos de Telegram construido con **NestJS** e integración con modelos de IA (**Groq** y **Gemini**). Captura mensajes de grupos en tiempo real y responde automáticamente usando IA.
 
-## Project setup
+## 🚀 Características
 
+- Recibe mensajes de grupos de Telegram en tiempo real via webhook
+- Responde automáticamente usando IA (Groq o Gemini)
+- Arquitectura modular con patrón Strategy para proveedores de IA
+- Fácil cambio de proveedor de IA desde variables de entorno
+
+## 🛠️ Stack Tecnológico
+
+- **Runtime:** Node.js
+- **Framework:** NestJS
+- **IA:** Groq (llama-3.1-8b-instant) / Google Gemini
+- **Tunnel:** ngrok (desarrollo local)
+
+## 📋 Prerrequisitos
+
+- Node.js >= 18
+- Cuenta en [Telegram](https://telegram.org)
+- Token de bot de [@BotFather](https://t.me/botfather)
+- API Key de [Groq](https://console.groq.com) o [Google AI Studio](https://aistudio.google.com)
+- [ngrok](https://ngrok.com) instalado
+
+## ⚙️ Instalación
+
+1. Clona el repositorio
 ```bash
-$ npm install
+git clone https://github.com/pucara05/telegram-group-webhook.git
+cd telegram-group-webhook
 ```
 
-## Compile and run the project
-
+2. Instala las dependencias
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
 ```
 
-## Run tests
-
+3. Configura las variables de entorno
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cp .env.example .env
 ```
 
-## Deployment
+4. Edita el `.env` con tus credenciales
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+## 🔐 Variables de Entorno
+```env
+TELEGRAM_BOT_TOKEN=    # Token de @BotFather
+NGROK_URL=             # URL de ngrok (desarrollo)
+AI_PROVIDER=groq       # groq o gemini
+GROQ_API_KEY=          # API Key de Groq
+GEMINI_API_KEY=        # API Key de Google AI Studio
+PORT=3000
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## 🚀 Uso en Desarrollo
+
+1. Inicia ngrok
+```bash
+ngrok http 3000
+```
+
+2. Copia la URL y pégala en `NGROK_URL` del `.env`
+
+3. Inicia el servidor
+```bash
+npm run start:dev
+```
+
+4. Agrega el bot al grupo de Telegram como administrador
+
+5. Escribe cualquier mensaje en el grupo y el bot responderá con IA
+
+## 🏗️ Arquitectura
+```
+src/
+├── ai/
+│   ├── interfaces/
+│   │   └── ai-provider.interface.ts  # Contrato común para proveedores
+│   ├── providers/
+│   │   ├── gemini.service.ts         # Proveedor Google Gemini
+│   │   └── groq.service.ts           # Proveedor Groq
+│   ├── ai.module.ts
+│   └── ai.service.ts                 # Coordinador de proveedores
+└── telegram/
+    ├── telegram.controller.ts        # Recibe webhooks de Telegram
+    ├── telegram.module.ts
+    └── telegram.service.ts           # Lógica de mensajes
+```
+
+## 📄 Licencia
+
+MIT
 
 ## Resources
 
