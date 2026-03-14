@@ -14,7 +14,6 @@ export class AiService {
     private readonly geminiService: GeminiService,
     private readonly groqService: GroqService,
   ) {
-    // Lee del .env cuál proveedor usar
     const providerName = this.configService.get<string>('AI_PROVIDER') ?? 'groq';
 
     if (providerName === 'gemini') {
@@ -26,7 +25,8 @@ export class AiService {
     }
   }
 
-  async processMessage(userMessage: string): Promise<string> {
-    return this.provider.processMessage(userMessage);
+  // ← ahora recibe y pasa el chatId
+  async processMessage(userMessage: string, chatId: string): Promise<string> {
+    return this.provider.processMessage(userMessage, chatId);
   }
 }

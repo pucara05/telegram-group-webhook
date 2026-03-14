@@ -13,18 +13,20 @@ export class GeminiService implements IAiProvider {
     this.genai = new GoogleGenAI({ apiKey });
   }
 
-  async processMessage(userMessage: string): Promise<string> {
-    try {
-      const response = await this.genai.models.generateContent({
-        model: 'gemini-1.5-flash',
-        contents: userMessage,
-      });
-      const result = response.text ?? 'No pude procesar tu mensaje';
-      this.logger.log(`🤖 Gemini respondió: ${result}`);
-      return result;
-    } catch (error) {
-      this.logger.error('Error llamando a Gemini', error);
-      return 'Hubo un error procesando tu mensaje';
-    }
+  as// En gemini.service.ts solo cambia la firma del método
+async processMessage(userMessage: string, chatId: string): Promise<string> {
+  // chatId no lo usa Gemini por ahora, pero debe estar en la firma
+  try {
+    const response = await this.genai.models.generateContent({
+      model: 'gemini-1.5-flash',
+      contents: userMessage,
+    });
+    const result = response.text ?? 'No pude procesar tu mensaje';
+    this.logger.log(`🤖 Gemini respondió: ${result}`);
+    return result;
+  } catch (error) {
+    this.logger.error('Error llamando a Gemini', error);
+    return 'Hubo un error procesando tu mensaje';
   }
+}
 }

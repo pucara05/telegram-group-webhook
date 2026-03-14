@@ -1,3 +1,3 @@
 export interface IAiProvider {
-  processMessage(message: string): Promise<string>;
+  processMessage(message: string, chatId: string): Promise<string>;
 }

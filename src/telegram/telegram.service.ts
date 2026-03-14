@@ -10,7 +10,7 @@ export class TelegramService {
 
   constructor(
     private readonly configService: ConfigService,
-    private readonly aiService: AiService, // ← inyectamos AiService
+    private readonly aiService: AiService,
   ) {
     const token = this.configService.get<string>('TELEGRAM_BOT_TOKEN');
     this.apiUrl = `https://api.telegram.org/bot${token}`;
@@ -25,7 +25,7 @@ export class TelegramService {
         return;
       }
 
-      const chatId = message.chat?.id;
+      const chatId = String(message.chat?.id);   // ← convertimos a string
       const chatName = message.chat?.title ?? 'Chat privado';
       const username = message.from?.username ?? message.from?.first_name ?? 'Desconocido';
       const text = message?.text ?? null;
@@ -34,14 +34,12 @@ export class TelegramService {
       this.logger.log(`💬 [${chatType}] ${chatName}`);
       this.logger.log(`👤 ${username}: ${text}`);
 
-      // Si no hay texto ignoramos (fotos, stickers, etc)
       if (!text) return;
 
-      // Mandamos el mensaje a Gemini
-      const aiResponse = await this.aiService.processMessage(text);
+      // Pasamos el chatId para que el historial sea por chat
+      const aiResponse = await this.aiService.processMessage(text, chatId);
 
-      // Respondemos en el grupo
-      await this.sendMessage(chatId, aiResponse);
+      await this.sendMessage(message.chat.id, aiResponse);
 
     } catch (error) {
       this.logger.error('Error procesando mensaje', error);
