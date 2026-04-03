@@ -20,101 +20,167 @@
 </p>
   <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
   [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
 # 🤖 Telegram Group Webhook Bot
 
-Bot inteligente para grupos de Telegram construido con **NestJS** e integración con modelos de IA (**Groq** y **Gemini**). Captura mensajes de grupos en tiempo real y responde automáticamente usando IA.
+Bot inteligente para grupos de Telegram construido con **NestJS** e integración con modelos de IA (Groq y Gemini).
+Captura mensajes en tiempo real vía webhook y responde automáticamente con IA, manteniendo **memoria persistente con Redis**.
+
+---
 
 ## 🚀 Características
 
-- Recibe mensajes de grupos de Telegram en tiempo real via webhook
-- Responde automáticamente usando IA (Groq o Gemini)
-- Arquitectura modular con patrón Strategy para proveedores de IA
-- Fácil cambio de proveedor de IA desde variables de entorno
+* Recibe mensajes de grupos de Telegram en tiempo real vía webhook
+* Responde automáticamente usando IA (Groq o Gemini)
+* 🧠 Memoria persistente por chat usando Redis
+* 🔧 Sistema de tools (clima, hora, etc.)
+* Arquitectura modular con patrón Strategy para proveedores de IA
+* Fácil cambio de proveedor de IA desde variables de entorno
+
+---
 
 ## 🛠️ Stack Tecnológico
 
-- **Runtime:** Node.js
-- **Framework:** NestJS
-- **IA:** Groq (llama-3.1-8b-instant) / Google Gemini
-- **Tunnel:** ngrok (desarrollo local)
+* Runtime: Node.js
+* Framework: NestJS
+* IA: Groq / Google Gemini
+* Base de datos: Redis (memoria de conversación)
+* Tunnel: ngrok (desarrollo local)
+* Contenedores: Docker
+
+---
 
 ## 📋 Prerrequisitos
 
-- Node.js >= 18
-- Cuenta en [Telegram](https://telegram.org)
-- Token de bot de [@BotFather](https://t.me/botfather)
-- API Key de [Groq](https://console.groq.com) o [Google AI Studio](https://aistudio.google.com)
-- [ngrok](https://ngrok.com) instalado
+* Node.js >= 18
+* Cuenta en Telegram
+* Token de bot de @BotFather
+* API Key de Groq o Google AI Studio
+* Docker (para Redis)
+* ngrok instalado
+
+---
 
 ## ⚙️ Instalación
 
-1. Clona el repositorio
+### 1. Clonar repositorio
+
 ```bash
 git clone https://github.com/pucara05/telegram-group-webhook.git
 cd telegram-group-webhook
 ```
 
-2. Instala las dependencias
+### 2. Instalar dependencias
+
 ```bash
 npm install
 ```
 
-3. Configura las variables de entorno
+### 3. Configurar variables de entorno
+
 ```bash
 cp .env.example .env
 ```
 
-4. Edita el `.env` con tus credenciales
+Editar `.env`:
 
-## 🔐 Variables de Entorno
 ```env
-TELEGRAM_BOT_TOKEN=    # Token de @BotFather
-NGROK_URL=             # URL de ngrok (desarrollo)
-AI_PROVIDER=groq       # groq o gemini
-GROQ_API_KEY=          # API Key de Groq
-GEMINI_API_KEY=        # API Key de Google AI Studio
+TELEGRAM_BOT_TOKEN=
+GROQ_API_KEY=
+GEMINI_API_KEY=
+AI_PROVIDER=groq
+
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=1
+
 PORT=3000
 ```
 
-## 🚀 Uso en Desarrollo
+---
 
-1. Inicia ngrok
+## 🧠 Ejecutar Redis
+
+```bash
+docker-compose up -d
+```
+
+---
+
+## 🚀 Uso en desarrollo
+
+### 1. Iniciar ngrok
+
 ```bash
 ngrok http 3000
 ```
 
-2. Copia la URL y pégala en `NGROK_URL` del `.env`
+### 2. Configurar webhook
 
-3. Inicia el servidor
+```bash
+curl -X POST "https://api.telegram.org/bot<TU_TOKEN>/setWebhook" \
+-d "url=https://TU_NGROK_URL/telegram/webhook"
+```
+
+### 3. Iniciar servidor
+
 ```bash
 npm run start:dev
 ```
 
-4. Agrega el bot al grupo de Telegram como administrador
+### 4. Usar el bot
 
-5. Escribe cualquier mensaje en el grupo y el bot responderá con IA
+* Agrega el bot al grupo como administrador
+* Desactiva privacy mode en BotFather
+* Envía mensajes en el grupo
 
-## 🏗️ Arquitectura
+---
+
+## 🔄 Flujo del sistema
+
+1. Telegram envía mensaje al webhook
+2. NestJS recibe el mensaje
+3. AI analiza intención
+4. Si necesita tool → se ejecuta
+5. Se guarda historial en Redis
+6. Se responde al usuario
+
+---
+
+## 🧱 Arquitectura
+
 ```
 src/
 ├── ai/
-│   ├── interfaces/
-│   │   └── ai-provider.interface.ts  # Contrato común para proveedores
 │   ├── providers/
-│   │   ├── gemini.service.ts         # Proveedor Google Gemini
-│   │   └── groq.service.ts           # Proveedor Groq
-│   ├── ai.module.ts
-│   └── ai.service.ts                 # Coordinador de proveedores
-└── telegram/
-    ├── telegram.controller.ts        # Recibe webhooks de Telegram
-    ├── telegram.module.ts
-    └── telegram.service.ts           # Lógica de mensajes
+│   ├── ai.service.ts
+│   └── ai.module.ts
+├── telegram/
+│   ├── telegram.controller.ts
+│   └── telegram.service.ts
+├── tools/
+├── common/
+│   └── redis/
 ```
+
+---
+
+## 🛠️ Tools disponibles
+
+* get_weather
+* get_datetime
+
+---
+
+## 🧠 Memoria con Redis
+
+El bot utiliza Redis para almacenar el historial de conversación por chat, permitiendo mantener contexto entre mensajes incluso después de reiniciar el servidor.
+
+---
 
 ## 📄 Licencia
 
 MIT
+
 
 ## Resources
 
