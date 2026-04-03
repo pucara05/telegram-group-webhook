@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TelegramModule } from './telegram/telegram.module';
 import { AiModule } from './ai/ai.module';
 import { ToolsModule } from './tools/tools.module';
+import { RedisModule } from './common/redis/redis.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { ToolsModule } from './tools/tools.module';
     TelegramModule,
     AiModule,
     ToolsModule,
+    RedisModule,
   ],
 })
 export class AppModule {}
